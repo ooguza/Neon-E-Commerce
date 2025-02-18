@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circular Arena Game</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4af7ff;
+            --primary-glow: 0 0 10px #4af7ff;
+            --background-color: #000000;
+            --text-color: #ffffff;
+        }
+
+        .color-picker {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(74, 247, 255, 0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(74, 247, 255, 0.2);
+        }
+
+        .color-picker h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .color-options {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .color-option {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .color-option:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px currentColor;
+        }
+
+        .color-option.active {
+            border-color: #fff;
+            transform: scale(1.1);
+            box-shadow: 0 0 20px currentColor;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        body {
+            background: var(--background-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-color);
+            overflow: hidden;
+        }
+
+        .header {
+            width: 100%;
+            padding: 20px;
+            text-align: center;
+            background: rgba(74, 247, 255, 0.05);
+            border-bottom: 1px solid rgba(74, 247, 255, 0.2);
+            margin-bottom: 20px;
+        }
+
+        .title {
+            font-size: 2.5em;
+            font-weight: 900;
+            color: var(--text-color);
+            text-shadow: var(--primary-glow);
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1em;
+            color: var(--primary-color);
+            opacity: 0.8;
+        }
+
+        .game-wrapper {
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+            padding: 20px;
+        }
+
+        #gameContainer {
+            position: relative;
+        }
+
+        canvas {
+            background: var(--background-color);
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(74, 247, 255, 0.1);
+        }
+
+        .game-info {
+            background: rgba(74, 247, 255, 0.05);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(74, 247, 255, 0.2);
+            width: 250px;
+        }
+
+        .score-container {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background: rgba(74, 247, 255, 0.1);
+        }
+
+        .score-label {
+            font-size: 0.9em;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        #score {
+            font-size: 2.5em;
+            font-weight: 600;
+            text-shadow: var(--primary-glow);
+        }
+
+        .controls {
+            margin-top: 20px;
+        }
+
+        .controls h3 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .control-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            font-size: 0.9em;
+        }
+
+        .control-icon {
+            width: 30px;
+            height: 30px;
+            background: rgba(74, 247, 255, 0.1);
+            border-radius: 5px;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(74, 247, 255, 0.2);
+        }
+
+        .high-scores {
+            margin-top: 20px;
+        }
+
+        .high-scores h3 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .score-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(74, 247, 255, 0.1);
+        }
+
+        @media (max-width: 1200px) {
+            .game-wrapper {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .game-info {
+                width: 100%;
+                max-width: 800px;
+                margin-top: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1 class="title">CIRCULAR ARENA</h1>
+        <p class="subtitle">Navigate • Strike • Score</p>
+    </header>
+
+    <main class="game-wrapper">
+        <div id="gameContainer">
+            <canvas id="gameCanvas" width="800" height="800"></canvas>
+        </div>
+
+        <div class="game-info">
+            <div class="score-container">
+                <div class="score-label">CURRENT SCORE</div>
+                <div id="score">0</div>
+            </div>
+
+            <div class="controls">
+                <h3>HOW TO PLAY</h3>
+                <div class="control-item">
+                    <div class="control-icon">🖱️</div>
+                    <span>Move player with mouse</span>
+                </div>
+                <div class="control-item">
+                    <div class="control-icon">⚡</div>
+                    <span>Hit ball into goal to score</span>
+                </div>
+                <div class="control-item">
+                    <div class="control-icon">🎯</div>
+                    <span>Time your shots with rotating goal</span>
+                </div>
+            </div>
+
+            <div class="high-scores">
+                <h3>HIGH SCORES</h3>
+                <div class="score-item">
+                    <span>YOU</span>
+                    <span id="personalBest">0</span>
+                </div>
+                <div class="score-item">
+                    <span>BEST TODAY</span>
+                    <span id="dailyBest">0</span>
+                </div>
+            </div>
+
+            <div class="color-picker">
+                <h3>THEME COLOR</h3>
+                <div class="color-options">
+                    <div class="color-option active" style="background-color: #4af7ff" data-color="#4af7ff"></div>
+                    <div class="color-option" style="background-color: #b026ff" data-color="#b026ff"></div>
+                    <div class="color-option" style="background-color: #39ff14" data-color="#39ff14"></div>
+                    <div class="color-option" style="background-color: #ff71ce" data-color="#ff71ce"></div>
+                    <div class="color-option" style="background-color: #ff6b08" data-color="#ff6b08"></div>
+                    <div class="color-option" style="background-color: #fffb38" data-color="#fffb38"></div>
+                    <div class="color-option" style="background-color: #ff2b2b" data-color="#ff2b2b"></div>
+                    <div class="color-option" style="background-color: #da00ff" data-color="#da00ff"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/game.js"></script>
+</body>
+</html>
